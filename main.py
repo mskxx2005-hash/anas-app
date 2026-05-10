@@ -138,3 +138,57 @@ else:
     st.title("🏆 جدول الترتيب")
     st.write("الجداول قيد التحديث...")
 
+import streamlit as st
+import requests
+import pandas as pd
+
+# 1. إعدادات الصفحة والـ API
+API_KEY = "4f74f8c769e012d50f70c0fe7e344070" # مفتاحك اللي دزيته
+BASE_URL = "https://v3.football.api-sports.io/fixtures?live=all"
+
+st.set_page_config(page_title="المحلل المحترف Live", layout="wide")
+
+# 2. كود جلب البيانات الحقيقية
+def get_live_matches():
+    headers = {
+        'x-rapidapi-key': API_KEY,
+        'x-rapidapi-host': 'v3.football.api-sports.io'
+    }
+    try:
+        response = requests.get(BASE_URL, headers=headers)
+        data = response.json()
+        return data.get('response', [])
+    except:
+        return []
+
+# 3. واجهة الموقع بالعربي
+st.title("⚽ مركز المباريات المباشرة (حقيقي)")
+
+matches = get_live_matches()
+
+if not matches:
+    st.warning("حالياً ماكو مباريات مباشرة.. تأكد من الوقت أو جرب لاحقاً.")
+else:
+    for match in matches:
+        home = match['teams']['home']['name']
+        away = match['teams']['away']['name']
+        home_score = match['goals']['home']
+        away_score = match['goals']['away']
+        league = match['league']['name']
+        minute = match['fixture']['status']['elapsed']
+
+        # تصميم بطاقة المباراة
+        st.markdown(f"""
+        <div style="background:#1a2235; padding:20px; border-radius:15px; margin-bottom:10px; border-right:5px solid #3b82f6; direction:rtl;">
+            <p style="color:#64748b; font-size:0.8rem;">{league}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0;">{home}</h3>
+                <h2 style="background:#0d1321; padding:5px 15px; border-radius:10px; color:#60a5fa;">{home_score} - {away_score}</h2>
+                <h3 style="margin:0;">{away}</h3>
+            </div>
+            <p style="color:#ef4444; font-weight:bold; margin-top:10px;">دقيقة '{minute} ⏱️</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# 4. نصيحة أخوية
+st.sidebar.info("ملاحظة: البيانات تتحدث تلقائياً من مصادر عالمية موثوقة.")
