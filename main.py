@@ -66,3 +66,44 @@ elif st.session_state.page == 'stats':
     if st.button("⬅️ العودة للرئيسية"): change_page('home')
     st.header("📊 ركن الخوارزميات المتقدمة")
     st.write("هنا تظهر إحصائيات الاستحواذ والضغط العالي.")
+import streamlit as st
+import requests
+from bs4 import BeautifulSoup
+
+def get_live_data_from_link():
+    # هذا الرابط كمثال لموقع يعطي نتائج مباشرة
+    url = "https://www.livescore.cz/" 
+    
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        matches_list = []
+        
+        # هنا الكود يدور على جدول المباريات بداخل الرابط
+        # ملاحظة: تقسيمات الـ HTML تختلف من موقع لثاني
+        table = soup.find('table', class_='match-table')
+        
+        if table:
+            rows = table.find_all('tr')
+            for row in rows[:10]: # ناخذ أول 10 مباريات
+                teams = row.find_all('td', class_='team')
+                score = row.find('td', class_='score')
+                
+                if teams and score:
+                    matches_list.append({
+                        "match": f"{teams[0].text} vs {teams[1].text}",
+                        "score": score.text
+                    })
+        return matches_list
+    except:
+        return [{"match": "خطأ في سحب البيانات من الرابط", "score": "-"}]
+
+# طريقة العرض في خانة "مباريات اليوم"
+st.header("📊 بيانات حقيقية مسحوبة من المواقع")
+
+if st.button("تحديث البيانات من الروابط"):
+    results = get_live_data_from_link()
+    for res in results:
+        st.write(f"⚽ {res['match']} | النتيجة: {res['score']}")
