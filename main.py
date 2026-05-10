@@ -1,49 +1,45 @@
 import streamlit as st
-import requests
-import pandas as pd
 
-# إعدادات الصفحة
-st.set_page_config(page_title="AI Football Center", layout="wide")
+# إعدادات الصفحة الأساسية
+st.set_page_config(page_title="مركز كرة القدم", layout="wide")
 
-API_KEY = "4f74f8c769e012d50f70c0fe7e344070"
+# 1. الترحيب (أول ما يفتح الموقع)
+st.markdown("<h1 style='text-align: center; color: #4CAF50;'>⚽ مرحبا بكم في عالم كرة القدم</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>منصتك الخاصة لتحليل المباريات والبيانات الحقيقية</p>", unsafe_allow_html=True)
 
-st.title("⚽ مركز المباريات المباشر (AI)")
-st.sidebar.header("لوحة التحكم")
+st.write("---") # خط فاصل
 
-def get_data():
-    # لاحظ المسافات هنا، ضروري تكون موجودة حتى ما يطلع خطأ
-    url = "https://v3.football.api-sports.io/fixtures?date=2026-05-10"
-    headers = {
-        'x-rapidapi-key': API_KEY, 
-        'x-rapidapi-host': 'v3.football.api-sports.io'
-    }
-    response = requests.get(url, headers=headers)
-    return response.json()
+# --- القسم الأول: مباريات اليوم ---
+st.header("📅 القسم الأول: مباريات اليوم")
+col1, col2 = st.columns(2)
 
-# جلب البيانات
-data = get_data()
-matches = data.get('response', [])
+with col1:
+    st.info("🏴󠁧󠁢󠁥󠁮󠁧󠁿 الدوري الإنجليزي: ليفربول vs مانشستر سيتي (ساعة 10:00)")
+with col2:
+    st.info("🇪🇸 الدوري الإسباني: ريال مدريد vs أتلتيكو مدريد (ساعة 11:30)")
 
-if not matches:
-    st.info("🏟️ لا توجد مباريات مسجلة لهذا التاريخ.")
-else:
-    for m in matches:
-        with st.container():
-            col1, col2, col3 = st.columns([2, 1, 2])
-            
-            with col1:
-                st.subheader(m['teams']['home']['name'])
-                st.image(m['teams']['home']['logo'], width=60)
-            
-            with col2:
-                home_goals = m['goals'].get('home', 0)
-                away_goals = m['goals'].get('away', 0)
-                st.header(f"{home_goals} - {away_goals}")
-                status = m['fixture']['status']['long']
-                st.write(f"⏱️ الحالة: {status}")
-            
-            with col3:
-                st.subheader(m['teams']['away']['name'])
-                st.image(m['teams']['away']['logo'], width=60)
-            
-            st.markdown("---")
+st.write("---")
+
+# --- القسم الثاني: مباشر وتحليل الخوارزميات ---
+st.header("🔴 القسم الثاني: المباريات المباشرة والتحليل الذكي")
+
+# مثال لمباراة لايف مع تحليل خوارزمي
+with st.container():
+    c1, c2, c3 = st.columns([2, 1, 2])
+    with c1:
+        st.subheader("بايرن ميونخ")
+    with c2:
+        st.header("1 - 0")
+        st.write("⏱️ دقيقة '65")
+    with c3:
+        st.subheader("باريس سان جيرمان")
+
+    # خوارزمية التحليل حسب الإحصائيات (تصميم الواجهة)
+    st.markdown("#### 🧠 تحليل الخوارزميات (AI Analysis)")
+    
+    # مربع التحليل
+    st.warning("""
+    **الخوارزمية تقترح:** - نسبة الاستحواذ لبايرن ميونخ 60% مع ضغط عالي في منطقة الخصم.
+    - خوارزمية التوقعات: احتمال تسجيل هدف ثاني بنسبة 72% بسبب كثرة التسديدات (8 تسديدات على المرمى).
+    - تنبيه: دفاع باريس يعاني من ثغرات في جهة اليمين.
+    """)
