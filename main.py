@@ -1,52 +1,40 @@
 import streamlit as st
+import pandas as pd
 
-# إعداد الصفحة لتكون عريضة وبشكل احترافي
-st.set_page_config(page_title="منصة أنس الرياضية", page_icon="⚽", layout="wide")
+# إعداد الصفحة
+st.set_page_config(page_title="محلل أنس المجاني", page_icon="⚽", layout="wide")
 
-# القائمة الجانبية (Sidebar) مثل اللي بالصور
+# تصميم الـ Sidebar (مثل ما ردت)
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/1165/1165187.png", width=100)
-    st.title("القائمة الرئيسية")
-    st.markdown(f"👤 **المطور: أنس**")
-    st.info("Instagram: **06cb4**")
+    st.title("🥇 منصة أنس الذكية")
+    st.info("Instagram: 06cb4")
     st.write("---")
-    
-    # اختيار الأقسام
-    choice = st.radio("انتقل إلى:", ["الرئيسية", "تحليل المباريات", "جدول الترتيب", "مركز النتائج المباشرة"])
-    st.write("---")
-    st.success("الموقع شغال 100%")
+    menu = st.radio("القائمة:", ["الرئيسية", "نتائج حية (مجانية)", "تحليل أنس الخاص"])
 
-# محتوى الصفحة بناءً على الاختيار
-if choice == "الرئيسية":
-    st.title("🏟️ أهلاً بك في منصة أنس للتحليل")
-    st.header(f"مرحباً بك يا بطل! تابع يوزري: 06cb4")
-    st.markdown("""
-    هذا الموقع مخصص لعشاق كرة القدم والتحليل الإحصائي. 
-    استخدم القائمة الجانبية للتنقل بين أقسام الموقع بكل سهولة.
-    """)
+# محتوى الصفحة
+if menu == "الرئيسية":
+    st.title("🏟️ أهلاً بك في عالم التحليل المجاني")
+    st.header(f"المحلل أنس (06cb4) يرحب بكم")
+    st.success("هذا الموقع يعمل ببيانات مجانية 100%")
     st.balloons()
 
-elif choice == "تحليل المباريات":
-    st.title("⚽ قسم التحليل الذكي")
-    match_name = st.text_input("أدخل المباراة المراد تحليلها (مثلاً: الكلاسيكو):")
-    if st.button("بدء التحليل"):
-        st.write(f"🔍 جاري تحليل مباراة **{match_name}** بالاعتماد على إحصائيات الموسم...")
-        st.info("التوقع: مباراة مغلقة وتكتيكية عالية.")
+elif menu == "نتائج حية (مجانية)":
+    st.title("⏱️ نتائج المباريات اليوم")
+    # هنا بيانات تجريبية مرتبة كأنها جاية من API
+    data = {
+        'المباراة': ['ريال مدريد vs برشلونة', 'مان سيتي vs ارسنال', 'ليفربول vs تشيلسي'],
+        'الحالة': ['مباشر', 'قريباً', 'انتهت'],
+        'النتيجة': ['2 - 1', '0 - 0', '3 - 2']
+    }
+    df = pd.DataFrame(data)
+    st.table(df) # تطلع بشكل جدول مرتب مثل المواقع الكبيرة
 
-elif choice == "جدول الترتيب":
-    st.title("📊 جداول ترتيب الدوريات")
-    st.write("قريباً سيتم ربط الموقع ببيانات حية للدوريات الكبرى.")
+elif menu == "تحليل أنس الخاص":
+    st.title("🧠 قسم التوقعات الذكي")
+    match = st.text_input("اكتب المباراة للتوقع:")
+    if st.button("اعطني التوقع"):
+        st.warning(f"تحليل أنس لـ {match}: نسبة الفوز 60% لصاحب الأرض، وتوقع أهداف غزيرة!")
 
-elif choice == "مركز النتائج المباشرة":
-    st.title("⏱️ نتائج حية")
-    st.write("هنا ستظهر النتائج فور حدوثها.")
-
-# إخفاء العلامات الافتراضية ليكون الموقع نظيف
-hide_st_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            </style>
-            """
+# إخفاء إعلانات الشركة
+hide_st_style = """<style>#MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}</style>"""
 st.markdown(hide_st_style, unsafe_allow_html=True)
