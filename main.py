@@ -11,7 +11,7 @@ st.title("⚽ مركز المباريات المباشر (AI)")
 st.sidebar.header("لوحة التحكم")
 
 def get_data():
-    url = "https://v3.football.api-sports.io/fixtures?live=all"
+url = "https://v3.football.api-sports.io/fixtures?date=2026-05-10"
     headers = {'x-rapidapi-key': API_KEY, 'x-rapidapi-host': 'v3.football.api-sports.io'}
     return requests.get(url, headers=headers).json()
 
