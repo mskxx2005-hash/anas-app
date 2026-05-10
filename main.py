@@ -1,70 +1,42 @@
 import streamlit as st
 import requests
+import pandas as pd
 
-# إعدادات واجهة موقع خوارزميات الاحترافية
-st.set_page_config(page_title="موقع خوارزميات", page_icon="⚽", layout="wide")
+# إعدادات الصفحة (تخليها تشبه المواقع الاحترافية)
+st.set_page_config(page_title="مركز تحليل المباريات الذكي", layout="wide")
 
-# ترحيب خاص
-st.markdown("<h1 style='text-align: center; color: #00ff00;'>أهلاً بكم في موقع خوارزميات ⚽</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>نظام التحليل الذكي للمباريات المباشرة</p>", unsafe_allow_html=True)
-st.markdown("---")
+API_KEY = "4f74f8c769e012d50f70c0fe7e344070"
 
-# المفتاح مالتك (ثبته إلك بالكود)
-API_KEY = "170d93f214msh2b139c9f91f8f55p1c9f1fjsn974e38b403a0"
+st.title("⚽ مركز المباريات المباشر (AI)")
+st.sidebar.header("لوحة التحكم")
 
-def get_analysis(h_score, a_score, h_team, a_team):
-    h = int(h_score)
-    a = int(a_score)
-    if h == a:
-        return f"🧠 تحليل خوارزميات: مباراة مغلقة تكتيكياً بين {h_team} و {a_team}. التوقعات تشير إلى تعادل حذر."
-    elif h > a:
-        return f"🧠 تحليل خوارزميات: سيطرة واضحة لـ {h_team}. الخوارزمية ترصد خللاً في توازن دفاع {a_team}."
-    else:
-        return f"🧠 تحليل خوارزميات: {a_team} يباغت الخصم بمرتدات قاتلة. الأفضلية تذهب للضيوف حالياً."
+def get_data():
+    url = "https://v3.football.api-sports.io/fixtures?live=all"
+    headers = {'x-rapidapi-key': API_KEY, 'x-rapidapi-host': 'v3.football.api-sports.io'}
+    return requests.get(url, headers=headers).json()
 
-# جلب البيانات من السيرفر العالمي
-url = "https://free-api-live-football-data.p.rapidapi.com/football-fixtures-live"
-headers = {
-    "x-rapidapi-key": API_KEY,
-    "x-rapidapi-host": "free-api-live-football-data.p.rapidapi.com"
-}
+data = get_data()
+matches = data.get('response', [])
 
-try:
-    with st.spinner('خوارزميات تفحص الملاعب العالمية...'):
-        response = requests.get(url, headers=headers, timeout=10)
-        data = response.json()
-
-    if data.get('status') == 'success' and data.get('data'):
-        st.subheader("🔴 المباريات المباشرة والتحليل الميداني")
-        
-        for match in data['data']:
-            h_name = match['home_team']['name']
-            a_name = match['away_team']['name']
-            h_score = match['home_score']
-            a_score = match['away_score']
-            minute = match.get('minute', 'LIVE')
-
-            # تصميم بطاقة المباراة
-            with st.container():
-                st.markdown(f"""
-                <div style="background-color: #1e1e1e; padding: 20px; border-radius: 15px; border-left: 5px solid #00ff00; margin-bottom: 20px;">
-                    <h3 style="color: white; text-align: center;">{h_name} <span style="color: #00ff00;">{h_score} - {a_score}</span> {a_name}</h3>
-                    <p style="text-align: center; color: #aaaaaa;">⏱ الدقيقة: {minute}</p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # التحليل الذكي
-                st.info(get_analysis(h_score, a_score, h_name, a_name))
-                st.markdown("<br>", unsafe_allow_html=True)
-    else:
-        st.warning("⚠️ لا توجد مباريات مباشرة مسجلة حالياً بالسيرفر. الخوارزمية بوضع الاستعداد.")
-        st.info("ملاحظة: السيرفر يحدث البيانات كل 5 دقائق.")
-
-except Exception as e:
-    st.error("السيرفر مشغول حالياً. الخوارزمية تحاول إعادة الاتصال... سوي Refresh بعد دقيقة.")
-
-# تذييل الصفحة
-st.sidebar.title("🤖 ركن الخوارزميات")
-st.sidebar.write("موقعك هسة صار يقرأ من أقوى سيرفرات الطوبة بالعالم.")
-if st.sidebar.button("تحديث البيانات فوراً"):
-    st.rerun()
+if not matches:
+    st.info("🏟️ لا توجد مباريات مباشرة حالياً. سيتم التحديث تلقائياً عند البدء.")
+else:
+    for m in matches:
+        with st.container():
+            col1, col2, col3 = st.columns([2, 1, 2])
+            
+            with col1:
+                st.subheader(m['teams']['home']['name'])
+                st.image(m['teams']['home']['logo'], width=60)
+            
+            with col2:
+                st.header(f"{m['goals']['home']} - {m['goals']['away']}")
+                st.write(f"⏱️ دقيقة: {m['fixture']['status']['elapsed']}'")
+            
+            with col3:
+                st.subheader(m['teams']['away']['name'])
+                st.image(m['teams']['away']['logo'], width=60)
+            
+            # قسم التحليل الذكي (خوارزمية بسيطة)
+            st.markdown("---")
+            st.info("🤖 تحليل AI: الفريق " + (m['teams']['home']['name'] if m['goals']['home'] > m['goals']['away'] else m['teams']['away']['name']) + " يسيطر حالياً.")
