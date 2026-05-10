@@ -1,24 +1,52 @@
 import streamlit as st
 
-st.set_page_config(page_title="محلل أنس الرياضي", page_icon="⚽")
+# إعداد الصفحة لتكون عريضة وبشكل احترافي
+st.set_page_config(page_title="منصة أنس الرياضية", page_icon="⚽", layout="wide")
 
-st.title("🏟️ منصة المحلل أنس لتحليل المباريات")
-st.markdown("---")
+# القائمة الجانبية (Sidebar) مثل اللي بالصور
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/1165/1165187.png", width=100)
+    st.title("القائمة الرئيسية")
+    st.markdown(f"👤 **المطور: أنس**")
+    st.info("Instagram: **06cb4**")
+    st.write("---")
+    
+    # اختيار الأقسام
+    choice = st.radio("انتقل إلى:", ["الرئيسية", "تحليل المباريات", "جدول الترتيب", "مركز النتائج المباشرة"])
+    st.write("---")
+    st.success("الموقع شغال 100%")
 
-# خانة إدخال المباراة
-st.subheader("🏁 حلل مباراتك القادمة")
-match = st.text_input("اكتب المباراة (مثلاً: ريال مدريد - مانشستر سيتي):")
+# محتوى الصفحة بناءً على الاختيار
+if choice == "الرئيسية":
+    st.title("🏟️ أهلاً بك في منصة أنس للتحليل")
+    st.header(f"مرحباً بك يا بطل! تابع يوزري: 06cb4")
+    st.markdown("""
+    هذا الموقع مخصص لعشاق كرة القدم والتحليل الإحصائي. 
+    استخدم القائمة الجانبية للتنقل بين أقسام الموقع بكل سهولة.
+    """)
+    st.balloons()
 
-if st.button("بدء التحليل الذكي"):
-    if match:
-        st.write(f"🔍 جاري سحب البيانات لمباراة: **{match}**...")
-        st.info("توقع أنس: المباراة ستكون هجومية، ونسبة الفوز للأرض 45%")
-        st.balloons()
-    else:
-        st.warning("يا بطل، اكتب اسم المباراة أولاً!")
+elif choice == "تحليل المباريات":
+    st.title("⚽ قسم التحليل الذكي")
+    match_name = st.text_input("أدخل المباراة المراد تحليلها (مثلاً: الكلاسيكو):")
+    if st.button("بدء التحليل"):
+        st.write(f"🔍 جاري تحليل مباراة **{match_name}** بالاعتماد على إحصائيات الموسم...")
+        st.info("التوقع: مباراة مغلقة وتكتيكية عالية.")
 
-st.sidebar.header("📊 إحصائيات الدوريات")
-st.sidebar.write("الدوري الإنجليزي - متصدر")
-st.sidebar.write("الدوري الإسباني - متصدر")
+elif choice == "جدول الترتيب":
+    st.title("📊 جداول ترتيب الدوريات")
+    st.write("قريباً سيتم ربط الموقع ببيانات حية للدوريات الكبرى.")
 
-st.success("✅ الموقع شغال وجاهز يا أنس البطل!")
+elif choice == "مركز النتائج المباشرة":
+    st.title("⏱️ نتائج حية")
+    st.write("هنا ستظهر النتائج فور حدوثها.")
+
+# إخفاء العلامات الافتراضية ليكون الموقع نظيف
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
